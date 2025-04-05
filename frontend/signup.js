@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         form.reset();
 
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "index.html";
         }, 3000);
       } catch (error) {
         console.error("Signup error:", error);
