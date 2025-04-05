@@ -3,44 +3,656 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./src/styles/style.css"/>
-    <link rel="stylesheet" href="./src/styles/pickup.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script
-    src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-    type="module"
-    ></script>
+    <title>Revive Wheels - Find Nearest Scrap Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 0;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #1abc9c 100%);
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #27ae60;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 0 20px;
+        }
+        
+        .map-container {
+            flex: 2;
+            min-width: 300px;
+            height: 600px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .map {
+            width: 100%;
+            height: 100%;
+            background-color: #f1f1f1;
+            position: relative;
+        }
+        
+        .map-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #e8f5e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        
+        .info-card h2 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .info-card p {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .info-card h3 {
+            color: #333;
+            margin: 15px 0 10px;
+            font-size: 18px;
+        }
+        
+        .center-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .center-item {
+            background-color: #f9f9f9;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .center-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .center-item.active {
+            background-color: #e8f5e9;
+            border-left: 4px solid #1abc9c;
+        }
+        
+        .center-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .center-item p {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .center-distance {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .directions-list {
+            list-style: none;
+        }
+        
+        .direction-step {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .direction-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background-color: #27ae60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        
+        .step-details {
+            flex: 1;
+        }
+        
+        .step-details p {
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .step-distance {
+            color: #27ae60;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-distance svg {
+            margin-right: 5px;
+        }
+        
+        .step-instruction {
+            font-weight: 500;
+        }
+        
+        .direction-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .location-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        
+        .location-btn:hover {
+            background-color: #219653;
+        }
+        
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .container {
+                flex-direction: column;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="header" id="header">
-        <div class="logo-container">
-          <img src="./images/logoUpdated.png" alt="Logo" />
-          <h3>Revive Wheels</h3>
+    <div class="hero">
+        <h1>Find Nearest Scrap Center</h1>
+        <p>Locate the most convenient scrap center for your vehicle. We'll guide you to our eco-friendly processing centers where your vehicle will be responsibly recycled.</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Enter your location...">
+            <button class="search-button" id="searchBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
         </div>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="../index.html" id="tab-style">Home</a></li>
-                <li><a href="../ev_coversion_ui.html" id="tab-style">EV Conversion</a></li>
-                <li><a href="../market.html" id="tab-style">Buy or Sell</a></li>
-                <li class="active"><a href="#" id="tab-style">Scrappage Network</a></li>
-            </ul>            
-        </nav>
-        <div class="auth-buttons">
-          <button>
-            <a href="../signin.html" style="text-decoration: none; color: green;">Login</a>
-          </button>
-          <button style="background-color: green;">
-            <a href="../signup.html" style="text-decoration: none; color: white;">SignUp</a>
-          </button>
-        </div>
-      </header>
-    <div>
-        I will see to it later
     </div>
+    
+    <div class="container">
+        <div class="map-container">
+            <div class="map" id="map">
+                <div class="map-placeholder" id="mapPlaceholder">
+                    <p>Map will be displayed here</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-card">
+                <h2>Nearest Scrap Centers</h2>
+                <p>Select a scrap center to view directions. Distance is calculated from your current location.</p>
+                
+                <button class="location-btn" id="getLocationBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Use my current location
+                </button>
+                
+                <ul class="center-list" id="centerList">
+                    <!-- Centers will be populated here -->
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h2>Directions</h2>
+                <h3 id="selectedCenterName">Green Recycling Center</h3>
+                <p id="selectedCenterAddress">456 Industry Ave, Portland</p>
+                
+                <ul class="directions-list" id="directionsList">
+                    <!-- Directions will be populated here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2025 Revive Wheels - Transforming Transportation, One Vehicle at a Time</p>
+    </div>
+
+    <script>
+        // Hardcoded data for scrap centers
+        const scrapCenters = [
+            {
+                id: 1,
+                name: "Green Recycling Center",
+                address: "456 Industry Ave, Portland",
+                distance: 2.7,
+                lat: 45.5152,
+                lng: -122.6784
+            },
+            {
+                id: 2,
+                name: "EcoScrap Processing",
+                address: "789 Recycle Blvd, Portland",
+                distance: 3.8,
+                lat: 45.5234,
+                lng: -122.6762
+            },
+            {
+                id: 3,
+                name: "Portland Auto Recyclers",
+                address: "222 Salvage St, Portland",
+                distance: 5.2,
+                lat: 45.5012,
+                lng: -122.6730
+            },
+            {
+                id: 4,
+                name: "Sustainable Metals Recycling",
+                address: "101 Green Way, Portland",
+                distance: 6.5,
+                lat: 45.5300,
+                lng: -122.6819
+            }
+        ];
+
+        // Hardcoded directions
+        const directions = [
+            {
+                step: 1,
+                instruction: "Head north on Main Street",
+                distance: "0.5 miles",
+                duration: "2 mins"
+            },
+            {
+                step: 2,
+                instruction: "Turn right onto Oak Avenue",
+                distance: "0.8 miles",
+                duration: "4 mins"
+            },
+            {
+                step: 3,
+                instruction: "Continue straight onto Cedar Boulevard",
+                distance: "1.2 miles",
+                duration: "5 mins"
+            },
+            {
+                step: 4,
+                instruction: "Turn left onto Industry Avenue",
+                distance: "0.2 miles",
+                duration: "1 min"
+            },
+            {
+                step: 5,
+                instruction: "Arrive at Green Recycling Center on the right",
+                distance: "",
+                duration: ""
+            }
+        ];
+
+        // DOM elements
+        const centerList = document.getElementById('centerList');
+        const directionsList = document.getElementById('directionsList');
+        const selectedCenterName = document.getElementById('selectedCenterName');
+        const selectedCenterAddress = document.getElementById('selectedCenterAddress');
+        const mapPlaceholder = document.getElementById('mapPlaceholder');
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.querySelector('.search-input');
+
+        // Initialize the page
+        function init() {
+            renderScrapCenters();
+            renderDirections(directions);
+            initializeMockMap();
+
+            // Event listeners
+            getLocationBtn.addEventListener('click', getCurrentLocation);
+            searchBtn.addEventListener('click', searchLocation);
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    searchLocation();
+                }
+            });
+        }
+
+        // Render the list of scrap centers
+        function renderScrapCenters() {
+            centerList.innerHTML = '';
+            
+            scrapCenters.forEach((center, index) => {
+                const centerItem = document.createElement('li');
+                centerItem.className = 'center-item' + (index === 0 ? ' active' : '');
+                centerItem.dataset.id = center.id;
+                
+                centerItem.innerHTML = `
+                    <h4>${center.name}</h4>
+                    <p>${center.address}</p>
+                    <p class="center-distance">${center.distance} miles away</p>
+                `;
+                
+                centerItem.addEventListener('click', () => selectCenter(center, centerItem));
+                
+                centerList.appendChild(centerItem);
+            });
+        }
+
+        // Select a center and update the directions
+        function selectCenter(center, element) {
+            // Remove active class from all items
+            document.querySelectorAll('.center-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected item
+            element.classList.add('active');
+            
+            // Update center info
+            selectedCenterName.textContent = center.name;
+            selectedCenterAddress.textContent = center.address;
+            
+            // Update map (mock)
+            updateMockMap(center);
+            
+            // Generate new directions (mock - would be from API in real implementation)
+            const newDirections = directions.map(dir => ({...dir}));
+            newDirections[4].instruction = `Arrive at ${center.name} on the right`;
+            renderDirections(newDirections);
+        }
+
+        // Render the directions list
+        function renderDirections(steps) {
+            directionsList.innerHTML = '';
+            
+            // Icons for different direction types
+            const icons = {
+                straight: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>',
+                right: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                left: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                arrival: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>'
+            };
+            
+            steps.forEach(step => {
+                const directionStep = document.createElement('li');
+                directionStep.className = 'direction-step';
+                
+                // Determine icon based on instruction text
+                let icon = icons.straight;
+                if (step.instruction.toLowerCase().includes('right')) {
+                    icon = icons.right;
+                } else if (step.instruction.toLowerCase().includes('left')) {
+                    icon = icons.left;
+                } else if (step.instruction.toLowerCase().includes('arrive')) {
+                    icon = icons.arrival;
+                }
+                
+                directionStep.innerHTML = `
+                    <div class="step-number">${step.step}</div>
+                    <div class="direction-icon">${icon}</div>
+                    <div class="step-details">
+                        <p class="step-instruction">${step.instruction}</p>
+                        ${step.distance ? `
+                            <p class="step-distance">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                ${step.distance} - ${step.duration}
+                            </p>
+                        ` : ''}
+                    </div>
+                `;
+                
+                directionsList.appendChild(directionStep);
+            });
+        }
+
+        // Mock map initialization
+        function initializeMockMap() {
+            mapPlaceholder.innerHTML = `
+                <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <h3 style="margin-top: 10px; color: #333;">Green Recycling Center</h3>
+                        <p style="color: #666;">2.7 miles from your location</p>
+                    </div>
+                    <div style="position: absolute; bottom: 20px; left: 20px; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <p style="margin: 0; font-weight: bold; color: #27ae60;">Total distance: 2.7 miles</p>
+                        <p style="margin: 5px 0 0; color: #666;">Estimated time: 12 mins</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update mock map for selected center
+        function updateMockMap(center) {
+            mapPlaceholder.innerHTML = `
+                <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <h3 style="margin-top: 10px; color: #333;">${center.name}</h3>
+                        <p style="color: #666;">${center.distance} miles from your location</p>
+                    </div>
+                    <div style="position: absolute; bottom: 20px; left: 20px; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <p style="margin: 0; font-weight: bold; color: #27ae60;">Total distance: ${center.distance} miles</p>
+                        <p style="margin: 5px 0 0; color: #666;">Estimated time: ${Math.round(center.distance * 4)} mins</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get current location (mock)
+        function getCurrentLocation() {
+            getLocationBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Location found!
+            `;
+            
+            setTimeout(() => {
+                getLocationBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Use my current location
+                `;
+                
+                // In a real app, we would use the geolocation API
+                // For this demo, we'll just refresh the centers with slightly changed distances
+                const updatedCenters = scrapCenters.map(center => ({
+                    ...center,
+                    distance: (center.distance - 0.2).toFixed(1)
+                }));
+                
+                // Re-render with updated distances
+                renderScrapCenters();
+            }, 1500);
+        }
+
+        // Search for a location (mock)
+        function searchLocation() {
+            const searchValue = searchInput.value.trim();
+            
+            if (searchValue) {
+                // In a real app, we would geocode the address and update the map
+                // For this demo, we'll just show a notification
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.top = '20px';
+                notification.style.left = '50%';
+                notification.style.transform = 'translateX(-50%)';
+                notification.style.backgroundColor = '#27ae60';
+                notification.style.color = 'white';
+                notification.style.padding = '10px 20px';
+                notification.style.borderRadius = '5px';
+                notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                notification.style.zIndex = '1000';
+                notification.textContent = `Searching for scrap centers near: ${searchValue}`;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                    
+                    // Update centers with new mock data
+                    const updatedCenters = scrapCenters.map(center => ({
+                        ...center,
+                        distance: (Math.random() * 5 + 1).toFixed(1)
+                    }));
+                    
+                    // Sort by distance
+                    updatedCenters.sort((a, b) => a.distance - b.distance);
+                    
+                    // Re-render
+                    renderScrapCenters();
+                }, 1500);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
