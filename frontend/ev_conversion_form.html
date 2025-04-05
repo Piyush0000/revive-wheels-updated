@@ -183,7 +183,7 @@
           ></textarea>
         </div>
 
-        <button type="submit" class="submit-btn">Submit Application</button>
+        <button type="submit" class="submit-btn" onclick=" ">Submit Application</button>
       </form>
     </div>
 
@@ -297,7 +297,7 @@
 
             if (response.ok) {
               alert("Form submitted successfully!");
-              window.location.href = "evconfirmation.html";
+              window.location.href = 'ev_coversion_ui.html'
             } else {
               throw new Error(result.message || "Submission failed");
             }
